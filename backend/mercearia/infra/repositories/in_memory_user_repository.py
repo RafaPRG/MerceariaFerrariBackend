@@ -1,13 +1,13 @@
-from site.domain.entities.user import User
-from site.domain.value_objects.email_vo import Email
-from site.domain.value_objects.password_vo import Password
-from site.domain.repositories.user_repository import UserRepository
+from mercearia.domain.entities.user import User
+from mercearia.domain.value_objects.email_vo import Email
+from mercearia.domain.value_objects.password_vo import Password
+from mercearia.domain.repositories.user_repository import UserRepository
 
 class InMemoryUserRepository(UserRepository):
     def __init__(self):
         self._users = [
-            User("1", "Miguel Ferrari", Email("admin@merceariaferrari.com"), Password("admin123"), "admin"),
-            User("2", "Jucelino Freitas", Email("jucelinofreitas@gmail.com"), Password("juce123"), "user")
+            User("1", "Miguel Ferrari", Email("admin@merceariaferrari.com"), Password("Admin123"), "admin"),
+            User("2", "Jucelino Freitas", Email("jucelinofreitas@gmail.com"), Password("Juice123"), "user")
         ]
         self._current_user = None
 

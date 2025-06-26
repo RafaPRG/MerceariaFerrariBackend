@@ -1,6 +1,6 @@
-from site.domain.repositories.user_repository import UserRepository
-from site.domain.value_objects.email_vo import Email
-from site.domain.value_objects.password_vo import Password
+from mercearia.domain.repositories.user_repository import UserRepository
+from mercearia.domain.value_objects.email_vo import Email
+from mercearia.domain.value_objects.password_vo import Password
 
 class UpdatePassword:
     def __init__(self, user_repository: UserRepository):

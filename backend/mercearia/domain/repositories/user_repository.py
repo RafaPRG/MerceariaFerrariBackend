@@ -1,12 +1,9 @@
 from abc import ABC, abstractmethod
-from site.domain.entities.user import User
+from mercearia.domain.entities.user import User
 
 class UserRepository(ABC):
     @abstractmethod
     def login(self, email: str, password: str) -> User: ...
-
-    @abstractmethod
-    def register(self, user: User) -> None: ...
 
     @abstractmethod
     def logout(self) -> None: ...
