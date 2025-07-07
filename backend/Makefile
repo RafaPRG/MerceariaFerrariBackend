@@ -6,4 +6,4 @@ test:
 	pytest -v
 
 test-cov:
-	pytest --cov=blog --cov-report=term-missing -v
+	pytest --cov=mercearia --cov-report=term-missing -v
