@@ -1,43 +1,36 @@
 import sqlalchemy as sa
-from sqlalchemy.orm import relationship, Mapped, mapped_column
-from mercearia.domain.entities.user import User
-from mercearia.domain.value_objects.email_vo import Email
-from mercearia.domain.value_objects.password_vo import Password
-import uuid
+from sqlalchemy.orm import Mapped, mapped_column
+from mercearia.domain.entities.produto import Produto
 from mercearia.infra.database import Base
+import uuid
 
 
-class UserModel(Base):
-    __tablename__ = "users"
+class ProdutoModel(Base):
+    __tablename__ = "produtos"
 
     id: Mapped[str] = mapped_column(
         sa.String, primary_key=True, default=lambda: str(uuid.uuid4())
     )
-    name: Mapped[str] = mapped_column(sa.String, nullable=False)
-    email: Mapped[str] = mapped_column(sa.String, unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(sa.String, nullable=False)
-    role: Mapped[str] = mapped_column(sa.String, default="user")
-
-    posts = relationship("PostModel", back_populates="user", cascade="all, delete")
-    comments = relationship(
-        "CommentModel", back_populates="user", cascade="all, delete"
-    )
+    nome: Mapped[str] = mapped_column(sa.String, nullable=False)
+    descricao: Mapped[str] = mapped_column(sa.String, nullable=False)
+    preco: Mapped[float] = mapped_column(sa.Float, nullable=False)
+    imagem: Mapped[str] = mapped_column(sa.String, nullable=False)
 
     @classmethod
-    def from_entity(cls, entity: User) -> "UserModel":
+    def from_entity(cls, entity: Produto) -> "ProdutoModel":
         return cls(
             id=entity.id,
-            name=entity.name,
-            email=str(entity.email),
-            password=str(entity.password),
-            role=entity.role,
+            nome=entity.nome,
+            descricao=entity.descricao,
+            preco=entity.preco,
+            imagem=entity.imagem,
         )
 
-    def to_entity(self) -> User:
-        return User(
+    def to_entity(self) -> Produto:
+        return Produto(
             id=self.id,
-            name=self.name,
-            email=Email(self.email),
-            password=Password(self.password),
-            role=self.role,
+            nome=self.nome,
+            descricao=self.descricao,
+            preco=self.preco,
+            imagem=self.imagem,
         )

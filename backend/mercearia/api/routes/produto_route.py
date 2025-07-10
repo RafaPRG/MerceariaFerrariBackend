@@ -11,4 +11,11 @@ repo = InMemoryProdutoRepository()
 def listar_produtos():
     usecase = GetAllProdutos(repo)
     produtos: list[Produto] = usecase.execute()
-    return [ProdutoResponse(nome=p.nome, descricao=p.descricao, preco=p.preco) for p in produtos]
+    return [
+        ProdutoResponse(
+            nome=p.nome,
+            descricao=p.descricao,
+            preco=p.preco,
+            imagem=p.imagem
+        ) for p in produtos
+    ]

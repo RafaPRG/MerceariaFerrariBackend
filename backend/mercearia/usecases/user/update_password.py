@@ -1,6 +1,7 @@
 from mercearia.domain.repositories.user_repository import UserRepository
 from mercearia.domain.value_objects.email_vo import Email
 from mercearia.domain.value_objects.password_vo import Password
+from mercearia.domain.entities.user import User
 
 class UpdatePassword:
     def __init__(self, user_repository: UserRepository):
@@ -10,13 +11,8 @@ class UpdatePassword:
         email_vo = Email(email)
         new_password_vo = Password(new_password)
 
-        user = None
-        for u in self.user_repository._users:
-            if u.email.value() == email_vo.value():
-                user = u
-                break
-
-        if user is None:
+        user: User | None = self.user_repository.get_current_user()
+        if user is None or user.email != email_vo:
             raise ValueError("Usuário não encontrado.")
 
         user.password = new_password_vo
