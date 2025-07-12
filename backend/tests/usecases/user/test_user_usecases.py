@@ -22,11 +22,16 @@ def test_login_failure(user_repository):
         login_usecase.execute("admin@merceariaferrari.com", "senhaErrada")
 
 def test_update_password_success(user_repository):
-    update_usecase = UpdatePassword(user_repository)
-    update_usecase.execute("admin@merceariaferrari.com", "Admin123")
-
+    # Primeiro, realiza o login do usuário (define o usuário atual)
     login_usecase = LoginUser(user_repository)
     user = login_usecase.execute("admin@merceariaferrari.com", "Admin123")
+
+    # Em seguida, atualiza a senha
+    update_usecase = UpdatePassword(user_repository)
+    update_usecase.execute("admin@merceariaferrari.com", "NovaSenha123")
+
+    # Por fim, tenta logar com a nova senha para confirmar que foi atualizada
+    user = login_usecase.execute("admin@merceariaferrari.com", "NovaSenha123")
     assert user.name == "Miguel Ferrari"
 
 def test_update_password_user_not_found(user_repository):
