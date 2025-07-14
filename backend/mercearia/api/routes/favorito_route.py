@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from mercearia.api.schemas.favorito_schema import FavoritoRequest, FavoritoResponse
 from mercearia.domain.entities.favorito import Favorito
 from mercearia.domain.entities.user import User
@@ -9,12 +9,14 @@ from mercearia.infra.repositories.in_memory_favorito_repository import InMemoryF
 from mercearia.usecases.favorito.add_favorito import AddFavorito
 from mercearia.usecases.favorito.get_user_favoritos import GetUserFavoritos
 from mercearia.usecases.favorito.remove_favorito import RemoveFavorito
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 router = APIRouter()
 repo = InMemoryFavoritoRepository()
+security = HTTPBearer()
 
 @router.get("/", response_model=list[FavoritoResponse], summary="Listar favoritos")
-def listar_favoritos(email: str):
+def listar_favoritos(email: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
     try:
         usecase = GetUserFavoritos(repo)
         user = User("temp", "Temp User", Email(email), Password("Fake1234"), "user")
@@ -28,7 +30,7 @@ def listar_favoritos(email: str):
 
 
 @router.post("/", summary="Adicionar favorito")
-def adicionar_favorito(data: FavoritoRequest):
+def adicionar_favorito(data: FavoritoRequest, credentials: HTTPAuthorizationCredentials = Depends(security)):
     try:
         usecase = AddFavorito(repo)
         user = User("temp", "Temp User", Email(data.email), Password("Fake1234"), "user")
@@ -40,7 +42,7 @@ def adicionar_favorito(data: FavoritoRequest):
 
 
 @router.delete("/", summary="Remover favorito")
-def remover_favorito(data: FavoritoRequest):
+def remover_favorito(data: FavoritoRequest, credentials: HTTPAuthorizationCredentials = Depends(security)):
     try:
         usecase = RemoveFavorito(repo)
         user = User("temp", "Temp User", Email(data.email), Password("Fake1234"), "user")

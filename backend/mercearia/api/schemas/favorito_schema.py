@@ -12,7 +12,4 @@ class FavoritoResponse(BaseModel):
 
     @classmethod
     def from_entity(cls, favorito):
-        return cls(
-            email=favorito.email,
-            produto=favorito.produto
-        )
+        return cls(email=favorito.email, produto=favorito.produto)

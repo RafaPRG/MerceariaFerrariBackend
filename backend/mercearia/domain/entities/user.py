@@ -1,6 +1,7 @@
 from mercearia.domain.value_objects.email_vo import Email
 from mercearia.domain.value_objects.password_vo import Password
 
+
 class User:
     def __init__(self, id: str, name: str, email: Email, password: Password, role: str):
         if role not in ["admin", "user"]:

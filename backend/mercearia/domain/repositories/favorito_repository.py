@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from mercearia.domain.entities.favorito import Favorito
 from typing import List
 
+
 class FavoritoRepository(ABC):
     @abstractmethod
     def add(self, favorito: Favorito) -> None:

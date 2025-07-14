@@ -11,10 +11,7 @@ app = FastAPI(
         "name": "Miguel Ferrari e Rafael Ponce",
         "email": "mercearia@exemplo.com",
     },
-    license_info={
-        "name": "MIT",
-        "url": "https://opensource.org/licenses/MIT"
-    },
+    license_info={"name": "MIT", "url": "https://opensource.org/licenses/MIT"},
     openapi_tags=openapi_tags,
 )
 
@@ -33,10 +30,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # Rota de teste
 @app.get("/")
 def root():
     return {"mensagem": "Bem-vindo à API da Mercearia!"}
+
 
 # Inclusão das rotas
 app.include_router(user_route.router, prefix="/user", tags=["Usuários"])

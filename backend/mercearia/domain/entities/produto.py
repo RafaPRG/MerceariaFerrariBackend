@@ -4,4 +4,4 @@ class Produto:
         self.nome = nome
         self.descricao = descricao
         self.preco = preco
-        self.imagem = imagem  
+        self.imagem = imagem

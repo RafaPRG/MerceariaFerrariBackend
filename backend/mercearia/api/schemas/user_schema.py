@@ -16,3 +16,9 @@ class UserResponse(BaseModel):
     nome: str = Field(..., description="Nome do usuário")
     email: EmailStr = Field(..., description="Email do usuário")
     tipo: Literal["user", "admin"] = Field(..., description="Tipo de usuário")
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
+    user: UserResponse

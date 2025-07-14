@@ -1,6 +1,7 @@
 from mercearia.domain.repositories.favorito_repository import FavoritoRepository
 from mercearia.domain.entities.favorito import Favorito
 
+
 class AddFavorito:
     def __init__(self, favorito_repository: FavoritoRepository):
         self.favorito_repository = favorito_repository

@@ -1,5 +1,6 @@
 import re
 
+
 class Email:
     def __init__(self, value: str):
         if not self._is_valid(value):

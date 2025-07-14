@@ -1,5 +1,8 @@
 from mercearia.usecases.produto.get_all_produtos import GetAllProdutos
-from mercearia.infra.repositories.in_memory_produto_repository import InMemoryProdutoRepository
+from mercearia.infra.repositories.in_memory_produto_repository import (
+    InMemoryProdutoRepository,
+)
+
 
 def test_get_all_produtos_returns_produtos():
     repo = InMemoryProdutoRepository()
