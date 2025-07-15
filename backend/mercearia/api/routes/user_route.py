@@ -6,25 +6,26 @@ from mercearia.api.schemas.user_schema import (
     TokenResponse,
 )
 from mercearia.domain.entities.user import User
-from mercearia.infra.repositories.in_memory_user_repository import (
-    InMemoryUserRepository,
-)
+from mercearia.infra.repositories.sqlalchemy.sqlalchemy_user_repository import SQLAlchemyUserRepository
 from mercearia.usecases.user.login_user import LoginUser
 from mercearia.usecases.user.update_password import UpdatePassword
+import sqlalchemy
 from typing import cast, Literal
 from mercearia.api.security import create_access_token
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from mercearia.api.deps import get_db_session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
-repo = InMemoryUserRepository()
 security = HTTPBearer()
 
 
 @router.post("/login", response_model=TokenResponse, summary="Login de usuário")
-def login(data: LoginRequest):
+async def login(data: LoginRequest, session: AsyncSession = Depends(get_db_session)):
     try:
+        repo = SQLAlchemyUserRepository(session)
         usecase = LoginUser(repo)
-        user: User = usecase.execute(data.email, data.password)
+        user: User = await usecase.execute(data.email, data.password)
         token = create_access_token(data={"sub": user.id})
         return TokenResponse(
             access_token=token,
@@ -40,13 +41,15 @@ def login(data: LoginRequest):
 
 
 @router.put("/update-password", summary="Atualizar senha do usuário")
-def update_password(
+async def update_password(
     data: UpdatePasswordRequest,
+    session: AsyncSession = Depends(get_db_session),
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
     try:
+        repo = SQLAlchemyUserRepository(session)
         usecase = UpdatePassword(repo)
-        usecase.execute(data.email, data.new_password)
+        await usecase.execute(data.email, data.new_password)
         return {"message": "Senha atualizada com sucesso"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

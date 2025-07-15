@@ -5,22 +5,28 @@ from mercearia.domain.entities.user import User
 from mercearia.domain.entities.produto import Produto
 from mercearia.domain.value_objects.email_vo import Email
 from mercearia.domain.value_objects.password_vo import Password
-from mercearia.infra.repositories.in_memory_favorito_repository import InMemoryFavoritoRepository
+from mercearia.infra.repositories.sqlalchemy.sqlalchemy_favorito_repository import SQLAlchemyFavoritoRepository
 from mercearia.usecases.favorito.add_favorito import AddFavorito
 from mercearia.usecases.favorito.get_user_favoritos import GetUserFavoritos
 from mercearia.usecases.favorito.remove_favorito import RemoveFavorito
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from mercearia.api.deps import get_db_session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
-repo = InMemoryFavoritoRepository()
 security = HTTPBearer()
 
 @router.get("/", response_model=list[FavoritoResponse], summary="Listar favoritos")
-def listar_favoritos(email: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def listar_favoritos(
+    email: str,
+    session: AsyncSession = Depends(get_db_session),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
     try:
+        repo = SQLAlchemyFavoritoRepository(session)
         usecase = GetUserFavoritos(repo)
         user = User("temp", "Temp User", Email(email), Password("Fake1234"), "user")
-        favoritos = usecase.execute(user.id)
+        favoritos = await usecase.execute(user.id)
         return [
             FavoritoResponse(email=email, produto=f.produto_id)
             for f in favoritos
@@ -30,24 +36,34 @@ def listar_favoritos(email: str, credentials: HTTPAuthorizationCredentials = Dep
 
 
 @router.post("/", summary="Adicionar favorito")
-def adicionar_favorito(data: FavoritoRequest, credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def adicionar_favorito(
+    data: FavoritoRequest,
+    session: AsyncSession = Depends(get_db_session),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
     try:
+        repo = SQLAlchemyFavoritoRepository(session)
         usecase = AddFavorito(repo)
         user = User("temp", "Temp User", Email(data.email), Password("Fake1234"), "user")
         produto = Produto(data.produto, "Produto X", "Descrição do produto", 10.0, "imagem.png")
-        usecase.execute(user.id, produto.id)
+        await usecase.execute(user.id, produto.id)
         return {"message": "Favorito adicionado com sucesso"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.delete("/", summary="Remover favorito")
-def remover_favorito(data: FavoritoRequest, credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def remover_favorito(
+    data: FavoritoRequest,
+    session: AsyncSession = Depends(get_db_session),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
     try:
+        repo = SQLAlchemyFavoritoRepository(session)
         usecase = RemoveFavorito(repo)
         user = User("temp", "Temp User", Email(data.email), Password("Fake1234"), "user")
         produto = Produto(data.produto, "Produto X", "Descrição do produto", 10.0, "imagem.png")
-        usecase.execute(user.id, produto.id)
+        await usecase.execute(user.id, produto.id)
         return {"message": "Favorito removido com sucesso"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
