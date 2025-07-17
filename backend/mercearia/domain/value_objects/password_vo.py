@@ -35,7 +35,10 @@ class Password:
 
     def verify(self, db: str) -> bool:
         return verify_password(self._plain_password, db)
-
+    
+    def value(self) -> str:
+        return self._hashed
+    
     def __eq__(self, other) -> bool:
         return isinstance(other, Password) and self._hashed == other._hashed
 

@@ -11,7 +11,6 @@ import sqlalchemy as sa
 from mercearia.api.security import get_password_hash
 import uuid
 
-
 # revision identifiers, used by Alembic.
 revision: str = 'a22c62f00736'
 down_revision: Union[str, Sequence[str], None] = None
@@ -48,38 +47,21 @@ def upgrade() -> None:
         sa.UniqueConstraint('email')
     )
 
-    # Inserir usuários
+    # Inserir usuário admin
     admin_id = str(uuid.uuid4())
     hashed_password_admin = get_password_hash("Admin123!")
-    op.execute(
-        sa.text("""
-            INSERT INTO users (id, name, email, password, role)
-            VALUES (:id, :name, :email, :password, :role)
-        """),
-        {
-            "id": admin_id,
-            "name": "Admin",
-            "email": "admin@admin.com",
-            "password": hashed_password_admin,
-            "role": "admin",
-        }
-    )
+    op.execute(f"""
+        INSERT INTO users (id, name, email, password, role)
+        VALUES ('{admin_id}', 'Admin', 'admin@admin.com', '{hashed_password_admin}', 'admin')
+    """)
 
+    # Inserir usuário comum
     user_id = str(uuid.uuid4())
     hashed_password_user = get_password_hash("Juice123")
-    op.execute(
-        sa.text("""
-            INSERT INTO users (id, name, email, password, role)
-            VALUES (:id, :name, :email, :password, :role)
-        """),
-        {
-            "id": user_id,
-            "name": "Jucelino Freitas",
-            "email": "jucelinofreitas@gmail.com",
-            "password": hashed_password_user,
-            "role": "user",
-        }
-    )
+    op.execute(f"""
+        INSERT INTO users (id, name, email, password, role)
+        VALUES ('{user_id}', 'Jucelino Freitas', 'jucelinofreitas@gmail.com', '{hashed_password_user}', 'user')
+    """)
 
     # Inserir produtos
     produtos = [
@@ -114,24 +96,20 @@ def upgrade() -> None:
     ]
 
     for produto in produtos:
-        op.execute(
-            sa.text("""
-                INSERT INTO produtos (id, nome, descricao, preco, imagem)
-                VALUES (:id, :nome, :descricao, :preco, :imagem)
-            """),
-            produto
-        )
+        op.execute(f"""
+            INSERT INTO produtos (id, nome, descricao, preco, imagem)
+            VALUES ('{produto["id"]}', '{produto["nome"]}', '{produto["descricao"]}', {produto["preco"]}, '{produto["imagem"]}')
+        """)
 
 
 def downgrade() -> None:
     """Downgrade schema."""
-    op.execute(
-        sa.text("DELETE FROM users WHERE email IN (:admin_email, :user_email)"),
-        {"admin_email": "admin@admin.com", "user_email": "jucelinofreitas@gmail.com"}
-    )
-    op.execute(
-        sa.text("DELETE FROM produtos WHERE id IN ('1', '2', '3', '4')")
-    )
+    op.execute("""
+        DELETE FROM users WHERE email IN ('admin@admin.com', 'jucelinofreitas@gmail.com')
+    """)
+    op.execute("""
+        DELETE FROM produtos WHERE id IN ('1', '2', '3', '4')
+    """)
     op.drop_table('users')
     op.drop_table('produtos')
     op.drop_table('favoritos')

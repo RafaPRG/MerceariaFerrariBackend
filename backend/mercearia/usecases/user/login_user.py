@@ -8,11 +8,11 @@ class LoginUser:
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 
-    def execute(self, email: str, password: str) -> User:
+    async def execute(self, email: str, password: str) -> User:
         email_vo = Email(email)
         password_vo = Password(password)
 
-        user = self.user_repository.login(email_vo.value(), password_vo.value())
+        user = await self.user_repository.login(email_vo, password_vo)
 
         self.user_repository.set_current_user(user)
 

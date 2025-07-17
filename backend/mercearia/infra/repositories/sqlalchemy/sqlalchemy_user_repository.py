@@ -6,6 +6,7 @@ from mercearia.domain.repositories.user_repository import UserRepository
 from mercearia.domain.value_objects.email_vo import Email
 from mercearia.domain.value_objects.password_vo import Password
 from mercearia.infra.models.user_model import UserModel
+from mercearia.api.security import verify_token
 
 
 class SQLAlchemyUserRepository(UserRepository):
@@ -18,7 +19,7 @@ class SQLAlchemyUserRepository(UserRepository):
         result = await self._session.execute(stmt)
         user_model = result.scalar_one_or_none()
 
-        if user_model and password.value() == user_model.password:
+        if user_model and password.verify(user_model.password):
             self._current_user = user_model.to_entity()
             return self._current_user
 
