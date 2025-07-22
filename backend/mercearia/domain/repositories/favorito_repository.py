@@ -5,21 +5,21 @@ from typing import List
 
 class FavoritoRepository(ABC):
     @abstractmethod
-    def add(self, favorito: Favorito) -> None:
+    async def add(self, favorito: Favorito) -> None:
         """Adds a product to the user's favorites"""
         ...
 
     @abstractmethod
-    def remove(self, favorito: Favorito) -> None:
+    async def remove(self, favorito: Favorito) -> None:
         """Removes a product from the user's favorites"""
         ...
 
     @abstractmethod
-    def list_by_user(self, user_id: str) -> List[Favorito]:
+    async def list_by_user(self, user_id: str) -> List[Favorito]:
         """Returns all favorites for a given user"""
         ...
 
     @abstractmethod
-    def exists(self, user_id: str, produto_id: str) -> bool:
+    async def exists(self, user_id: str, produto_id: str) -> bool:
         """Checks if a specific product is already favorited by the user"""
         ...

@@ -18,7 +18,7 @@ async def listar_produtos(
 ):
     repo = SQLAlchemyProdutoRepository(session)
     usecase = GetAllProdutos(repo)
-    produtos: list[Produto] = await usecase.execute()
+    produtos = await usecase.execute()
     return [
         ProdutoResponse(
             id=p.id, nome=p.nome, descricao=p.descricao, preco=p.preco, imagem=p.imagem

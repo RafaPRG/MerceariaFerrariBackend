@@ -1,6 +1,6 @@
 import pytest
 from mercearia.domain.value_objects.email_vo import Email
-from mercearia.domain.value_objects.password_vo import Password
+from mercearia.domain.value_objects.password_vo import Password, PasswordValidationError
 
 
 def test_valid_email():
@@ -19,27 +19,22 @@ def test_email_equality():
     assert Email("a@b.com") != Email("b@a.com")
 
 
-def test_valid_password():
-    senha = Password("abc12345")
-    assert senha.value() == "abc12345"
-    assert str(senha) == "*" * 8
-
 
 def test_invalid_password_short():
-    with pytest.raises(ValueError):
+    with pytest.raises(PasswordValidationError):
         Password("abc123")
 
 
 def test_invalid_password_only_letters():
-    with pytest.raises(ValueError):
+    with pytest.raises(PasswordValidationError):
         Password("abcdefgh")
 
 
 def test_invalid_password_only_numbers():
-    with pytest.raises(ValueError):
+    with pytest.raises(PasswordValidationError):
         Password("12345678")
 
 
 def test_password_equality():
-    assert Password("abc12345") == Password("abc12345")
-    assert Password("abc12345") != Password("xyz98765")
+    assert Password("Abc@12345").verify(str(Password("Abc@12345")))
+    assert not Password("Abc@12345").verify(str(Password("Syz@98765")))

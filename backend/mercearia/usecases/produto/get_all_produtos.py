@@ -7,5 +7,5 @@ class GetAllProdutos:
     def __init__(self, produto_repository: ProdutoRepository):
         self._produto_repository = produto_repository
 
-    def execute(self) -> List[Produto]:
-        return self._produto_repository.get_all()
+    async def execute(self) -> List[Produto]:
+        return await self._produto_repository.get_all()

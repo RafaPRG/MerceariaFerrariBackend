@@ -44,7 +44,7 @@ async def adicionar_favorito(
 ):
     try:
         usecase = AddFavorito(repo)
-        await usecase.execute(user.id, data.id_produto)
+        await usecase.execute(user.id, data.produto_id)
         return {"message": "Favorito adicionado com sucesso"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -58,7 +58,7 @@ async def remover_favorito(
 ):
     try:
         usecase = RemoveFavorito(repo)
-        await usecase.execute(user.id, data.id_produto)
+        await usecase.execute(user.id, data.produto_id)
         return {"message": "Favorito removido com sucesso"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

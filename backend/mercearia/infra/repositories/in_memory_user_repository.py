@@ -24,18 +24,18 @@ class InMemoryUserRepository(UserRepository):
         ]
         self._current_user = None
 
-    def login(self, email: Email, password: Password) -> User:
+    async def login(self, email: Email, password: Password) -> User:
         for user in self._users:
             if user.email.value() == email and user.password.value() == password:
                 self._current_user = user
                 return user
         raise ValueError("Credenciais inválidas")
 
-    def logout(self) -> None:
+    async def logout(self) -> None:
         self._current_user = None
 
-    def get_current_user(self) -> User | None:
+    async def get_current_user(self) -> User | None:
         return self._current_user
 
-    def set_current_user(self, user: User) -> None:
+    async def set_current_user(self, user: User) -> None:
         self._current_user = user

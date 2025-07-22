@@ -10,6 +10,7 @@ class RemoveFavorito:
         favorito = Favorito(user_id=user_id, produto_id=produto_id)
 
         if await self.favorito_repository.exists(user_id, produto_id):
-          return await self.favorito_repository.remove(favorito)
+          await self.favorito_repository.remove(favorito)
+          return
         
         raise ValueError("Favorito não existente")

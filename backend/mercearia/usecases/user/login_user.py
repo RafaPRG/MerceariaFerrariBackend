@@ -14,6 +14,6 @@ class LoginUser:
 
         user = await self.user_repository.login(email_vo, password_vo)
 
-        self.user_repository.set_current_user(user)
+        await self.user_repository.set_current_user(user)
 
         return user

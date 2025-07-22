@@ -22,8 +22,7 @@ class FavoritoModel(Base):
         return cls(
             id=entity.id,
             user_id=entity.user_id,
-            produto_id=entity.produto_id,
-            produto=entity.produto
+            produto_id=entity.produto_id
         )
 
     def to_entity(self) -> Favorito:

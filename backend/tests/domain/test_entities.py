@@ -10,7 +10,7 @@ from mercearia.domain.value_objects.password_vo import Password
 
 def test_create_valid_user():
     email = Email("user@example.com")
-    password = Password("senha123")
+    password = Password("Senha@123")
     user = User(id="1", name="João", email=email, password=password, role="user")
 
     assert user.id == "1"
@@ -22,7 +22,7 @@ def test_create_valid_user():
 
 def test_create_user_invalid_role():
     email = Email("user@example.com")
-    password = Password("senha123")
+    password = Password("Senha@123")
     with pytest.raises(ValueError):
         User(id="1", name="João", email=email, password=password, role="guest")
 

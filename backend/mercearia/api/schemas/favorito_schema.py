@@ -4,7 +4,7 @@ from mercearia.domain.entities.favorito import Favorito
 
 
 class FavoritoRequest(BaseModel):
-    id_produto: str = Field(..., description="Nome do produto favoritado")
+    produto_id: str = Field(..., description="Nome do produto favoritado")
 
 
 class FavoritoResponse(BaseModel):

@@ -7,5 +7,5 @@ class GetUserFavoritos:
     def __init__(self, favorito_repository: FavoritoRepository):
         self.favorito_repository = favorito_repository
 
-    def execute(self, user_id: str) -> List[Favorito]:
-        return self.favorito_repository.list_by_user(user_id)
+    async def execute(self, user_id: str) -> List[Favorito]:
+        return await self.favorito_repository.list_by_user(user_id)
