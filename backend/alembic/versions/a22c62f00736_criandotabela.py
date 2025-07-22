@@ -47,60 +47,6 @@ def upgrade() -> None:
         sa.UniqueConstraint('email')
     )
 
-    # Inserir usuário admin
-    admin_id = str(uuid.uuid4())
-    hashed_password_admin = get_password_hash("Admin123!")
-    op.execute(f"""
-        INSERT INTO users (id, name, email, password, role)
-        VALUES ('{admin_id}', 'Admin', 'admin@admin.com', '{hashed_password_admin}', 'admin')
-    """)
-
-    # Inserir usuário comum
-    user_id = str(uuid.uuid4())
-    hashed_password_user = get_password_hash("Juice123")
-    op.execute(f"""
-        INSERT INTO users (id, name, email, password, role)
-        VALUES ('{user_id}', 'Jucelino Freitas', 'jucelinofreitas@gmail.com', '{hashed_password_user}', 'user')
-    """)
-
-    # Inserir produtos
-    produtos = [
-        {
-            "id": "1",
-            "nome": "Arroz",
-            "descricao": "Arroz branco tipo 1",
-            "preco": 5.99,
-            "imagem": "arroz.jpg"
-        },
-        {
-            "id": "2",
-            "nome": "Feijão",
-            "descricao": "Feijão carioca",
-            "preco": 6.49,
-            "imagem": "feijao.jpg"
-        },
-        {
-            "id": "3",
-            "nome": "Macarrão",
-            "descricao": "Macarrão espaguete",
-            "preco": 4.99,
-            "imagem": "macarrao.jpg"
-        },
-        {
-            "id": "4",
-            "nome": "Café",
-            "descricao": "Café torrado e moído",
-            "preco": 10.99,
-            "imagem": "cafe.jpg"
-        },
-    ]
-
-    for produto in produtos:
-        op.execute(f"""
-            INSERT INTO produtos (id, nome, descricao, preco, imagem)
-            VALUES ('{produto["id"]}', '{produto["nome"]}', '{produto["descricao"]}', {produto["preco"]}, '{produto["imagem"]}')
-        """)
-
 
 def downgrade() -> None:
     """Downgrade schema."""

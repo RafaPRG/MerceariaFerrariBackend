@@ -7,31 +7,27 @@ from mercearia.usecases.favorito.add_favorito import AddFavorito
 from mercearia.usecases.favorito.get_user_favoritos import GetUserFavoritos
 from mercearia.usecases.favorito.remove_favorito import RemoveFavorito
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from mercearia.api.deps import get_db_session
+from mercearia.api.deps import get_db_session, get_current_user, get_favorito_repository
 from sqlalchemy.ext.asyncio import AsyncSession
+from mercearia.domain.repositories.favorito_repository import FavoritoRepository
+from mercearia.api.schemas.produto_schema import ProdutoResponse
 
 router = APIRouter()
 security = HTTPBearer()
 
 @router.get("/", response_model=list[FavoritoResponse], summary="Listar favoritos")
 async def listar_favoritos(
-    email: str,
     session: AsyncSession = Depends(get_db_session),
     credentials: HTTPAuthorizationCredentials = Depends(security),
+    user = Depends(get_current_user),
+    repo : FavoritoRepository = Depends(get_favorito_repository)
 ):
     try:
-        # Busca usuário no banco
-        user_repo = SQLAlchemyUserRepository(session)
-        user = await user_repo.login(email)
-        if user is None:
-            raise HTTPException(status_code=404, detail="Usuário não encontrado.")
-
-        repo = SQLAlchemyFavoritoRepository(session)
         usecase = GetUserFavoritos(repo)
 
         favoritos = await usecase.execute(user.id)
         return [
-            FavoritoResponse(email=email, produto=f.Produto)
+            FavoritoResponse.from_entity(f)
             for f in favoritos
         ]
     except Exception as e:
@@ -43,40 +39,26 @@ async def adicionar_favorito(
     data: FavoritoRequest,
     session: AsyncSession = Depends(get_db_session),
     credentials: HTTPAuthorizationCredentials = Depends(security),
+    user = Depends(get_current_user),
+    repo : FavoritoRepository = Depends(get_favorito_repository)
 ):
     try:
-        user_repo = SQLAlchemyUserRepository(session)
-        user = await user_repo.login(data.email)
-        if user is None:
-            raise HTTPException(status_code=404, detail="Usuário não encontrado.")
-
-        repo = SQLAlchemyFavoritoRepository(session)
         usecase = AddFavorito(repo)
-
-        produto = Produto(data.produto, "Produto X", "Descrição do produto", 10.0, "imagem.png")
-        await usecase.execute(user.id, produto.id)
+        await usecase.execute(user.id, data.id_produto)
         return {"message": "Favorito adicionado com sucesso"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-
 @router.delete("/", summary="Remover favorito")
 async def remover_favorito(
     data: FavoritoRequest,
-    session: AsyncSession = Depends(get_db_session),
     credentials: HTTPAuthorizationCredentials = Depends(security),
+    user = Depends(get_current_user),
+    repo: FavoritoRepository = Depends(get_favorito_repository)
 ):
     try:
-        user_repo = SQLAlchemyUserRepository(session)
-        user = await user_repo.login(data.email)
-        if user is None:
-            raise HTTPException(status_code=404, detail="Usuário não encontrado.")
-
-        repo = SQLAlchemyFavoritoRepository(session)
         usecase = RemoveFavorito(repo)
-
-        produto = Produto(data.produto, "Produto X", "Descrição do produto", 10.0, "imagem.png")
-        await usecase.execute(user.id, produto.id)
+        await usecase.execute(user.id, data.id_produto)
         return {"message": "Favorito removido com sucesso"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

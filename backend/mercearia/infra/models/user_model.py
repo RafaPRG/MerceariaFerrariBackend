@@ -1,5 +1,6 @@
+import re
 import sqlalchemy as sa
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from mercearia.domain.entities.user import User
 from mercearia.domain.value_objects.email_vo import Email
 from mercearia.domain.value_objects.password_vo import Password
@@ -17,6 +18,8 @@ class UserModel(Base):
     email: Mapped[str] = mapped_column(sa.String, unique=True, nullable=False)
     password: Mapped[str] = mapped_column(sa.String, nullable=False)
     role: Mapped[str] = mapped_column(sa.String, default="user")
+
+    favoritos = relationship("FavoritoModel", lazy="selectin", back_populates="user")
 
     @classmethod
     def from_entity(cls, entity: User) -> "UserModel":

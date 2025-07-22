@@ -6,6 +6,7 @@ from mercearia.api.schemas.user_schema import (
     TokenResponse,
 )
 from mercearia.domain.entities.user import User
+from mercearia.domain.repositories.user_repository import UserRepository
 from mercearia.infra.repositories.sqlalchemy.sqlalchemy_user_repository import SQLAlchemyUserRepository
 from mercearia.usecases.user.login_user import LoginUser
 from mercearia.usecases.user.update_password import UpdatePassword
@@ -13,7 +14,7 @@ import sqlalchemy
 from typing import cast, Literal
 from mercearia.api.security import create_access_token
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from mercearia.api.deps import get_db_session
+from mercearia.api.deps import get_db_session, get_user_repository
 from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
@@ -21,9 +22,8 @@ security = HTTPBearer()
 
 
 @router.post("/login", response_model=TokenResponse, summary="Login de usuário")
-async def login(data: LoginRequest, session: AsyncSession = Depends(get_db_session)):
+async def login(data: LoginRequest, repo:UserRepository = Depends(get_user_repository)):
     try:
-        repo = SQLAlchemyUserRepository(session)
         usecase = LoginUser(repo)
         user: User = await usecase.execute(data.email, data.password)
         token = create_access_token(data={"sub": user.id})
@@ -44,10 +44,9 @@ async def login(data: LoginRequest, session: AsyncSession = Depends(get_db_sessi
 async def update_password(
     data: UpdatePasswordRequest,
     session: AsyncSession = Depends(get_db_session),
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    repo: UserRepository = Depends(get_user_repository)
 ):
     try:
-        repo = SQLAlchemyUserRepository(session)
         usecase = UpdatePassword(repo)
         await usecase.execute(data.email, data.new_password)
         return {"message": "Senha atualizada com sucesso"}

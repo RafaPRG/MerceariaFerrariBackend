@@ -21,7 +21,7 @@ async def listar_produtos(
     produtos: list[Produto] = await usecase.execute()
     return [
         ProdutoResponse(
-            nome=p.nome, descricao=p.descricao, preco=p.preco, imagem=p.imagem
+            id=p.id, nome=p.nome, descricao=p.descricao, preco=p.preco, imagem=p.imagem
         )
         for p in produtos
     ]

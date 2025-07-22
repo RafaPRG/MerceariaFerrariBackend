@@ -16,3 +16,10 @@ class UserRepository(ABC):
 
     @abstractmethod
     def set_current_user(self, user: User) -> None: ...
+
+    @abstractmethod
+    def update_password(self, email:Email, password:Password): ...
+
+    @abstractmethod
+    def get_by_id(self, user_id: str) -> User:
+        pass

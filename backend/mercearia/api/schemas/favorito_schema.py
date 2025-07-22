@@ -1,15 +1,16 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
+from mercearia.api.schemas.produto_schema import ProdutoResponse
+from mercearia.domain.entities.favorito import Favorito
 
 
 class FavoritoRequest(BaseModel):
-    email: EmailStr = Field(..., description="Email do usuário")
-    produto: str = Field(..., description="Nome do produto favoritado")
+    id_produto: str = Field(..., description="Nome do produto favoritado")
 
 
 class FavoritoResponse(BaseModel):
-    email: EmailStr = Field(..., description="Email do usuário")
-    produto: str = Field(..., description="Nome do produto favoritado")
+    id: str = Field(..., description="id do usuario")
+    produto: ProdutoResponse = Field(..., description="Nome do produto favoritado")
 
     @classmethod
-    def from_entity(cls, favorito):
-        return cls(email=favorito.email, produto=favorito.produto)
+    def from_entity(cls, favorito:Favorito):
+        return cls(id=favorito.user_id, produto=ProdutoResponse.from_entity(favorito.produto))
