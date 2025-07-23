@@ -1,33 +1,41 @@
 import pytest
-from sqlalchemy.future import select
-from mercearia.infra.models.user_model import UserModel
+from httpx import AsyncClient
 
 @pytest.mark.asyncio
-async def test_login_update_password_and_check_db(client, db_session):
-    email = "rafa@gmail.com"
-    old_password = "123456@Aa"
-    new_password = "NovaSenha@123"
+async def test_login_user_successfully(client: AsyncClient):
+    response = await client.post(
+        "/user/login",  # <- caminho correto com prefixo
+        json={
+            "email": "admin@merceariaferrari.com",  # conforme populado no main.py
+            "password": "Admin@123"                 # senha em texto puro
+        }
+    )
 
-    # 1. Login inicial via endpoint
-    response = await client.post("/login", json={"email": email, "password": old_password})
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Erro: {response.text}"
     data = response.json()
+
     assert "access_token" in data
-    token = data["access_token"]
+    assert data["token_type"] == "bearer"
 
-    # 2. Atualizar senha via endpoint
-    response = await client.put("/update-password", json={"email": email, "new_password": new_password})
-    assert response.status_code == 200
-    assert response.json()["message"] == "Senha atualizada com sucesso"
+    user = data["user"]
+    assert user["email"] == "admin@merceariaferrari.com"
+    assert user["nome"] == "Miguel Ferrari"
+    assert user["tipo"] == "admin"
 
-    # 3. Login com a nova senha
-    response = await client.post("/login", json={"email": email, "password": new_password})
-    assert response.status_code == 200
-    assert "access_token" in response.json()
+    import pytest
+from httpx import AsyncClient
 
-    # 4. Consulta direta no banco para confirmar alteração (exemplo: checar se usuário existe)
-    result = await db_session.execute(select(UserModel).where(UserModel.email == email))
-    user = result.scalars().first()
-    assert user is not None
-    assert user.email == email
-    # Opcional: se quiser confirmar a senha mudou, precisaria desencriptar/saber a lógica da senha no banco
+@pytest.mark.asyncio
+async def test_login_user_with_wrong_password(client: AsyncClient):
+    response = await client.post(
+        "/user/login",  # rota correta com prefixo
+        json={
+            "email": "admin@merceariaferrari.com",
+            "password": "senhaErrada123!"  # senha incorreta de propósito
+        }
+    )
+
+    assert response.status_code == 401
+    data = response.json()
+    assert data["detail"] in ["Credenciais inválidas", "Invalid credentials", "Senha inválida", "Usuário ou senha incorretos"]
+
