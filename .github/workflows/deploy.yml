@@ -3,7 +3,7 @@ name: Deploy to Render via Docker
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   test:
