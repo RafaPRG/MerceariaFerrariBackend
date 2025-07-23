@@ -10,4 +10,10 @@ class ProdutoResponse(BaseModel):
 
     @classmethod
     def from_entity(cls, produto):
-        return cls(id=produto.id, nome=produto.nome, descricao=produto.descricao, preco=produto.preco, imagem=produto.imagem)
+        return cls(
+            id=produto.id,
+            nome=produto.nome,
+            descricao=produto.descricao,
+            preco=produto.preco,
+            imagem=produto.imagem,
+        )

@@ -3,19 +3,27 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from mercearia.api.settings import settings
 from mercearia.domain.repositories.user_repository import UserRepository
-from mercearia.infra.repositories.sqlalchemy.sqlalchemy_user_repository import SQLAlchemyUserRepository
-from mercearia.infra.repositories.sqlalchemy.sqlalchemy_produto_repository import SQLAlchemyProdutoRepository
-from mercearia.infra.repositories.sqlalchemy.sqlalchemy_favorito_repository import SQLAlchemyFavoritoRepository
+from mercearia.infra.repositories.sqlalchemy.sqlalchemy_user_repository import (
+    SQLAlchemyUserRepository,
+)
+from mercearia.infra.repositories.sqlalchemy.sqlalchemy_produto_repository import (
+    SQLAlchemyProdutoRepository,
+)
+from mercearia.infra.repositories.sqlalchemy.sqlalchemy_favorito_repository import (
+    SQLAlchemyFavoritoRepository,
+)
 from mercearia.domain.entities.user import User
 from mercearia.infra.database import async_session
 import sqlalchemy
 from sqlalchemy.ext.asyncio import AsyncSession
 from collections.abc import AsyncGenerator
 
+
 # Geração de sessão assíncrona
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session() as session:
         yield session
+
 
 # Repositórios com dependência da sessão
 async def get_user_repository(
@@ -23,18 +31,22 @@ async def get_user_repository(
 ) -> SQLAlchemyUserRepository:
     return SQLAlchemyUserRepository(db)
 
+
 async def get_produto_repository(
     db: AsyncSession = Depends(get_db_session),
 ) -> SQLAlchemyProdutoRepository:
     return SQLAlchemyProdutoRepository(db)
+
 
 async def get_favorito_repository(
     db: AsyncSession = Depends(get_db_session),
 ) -> SQLAlchemyFavoritoRepository:
     return SQLAlchemyFavoritoRepository(db)
 
+
 # Autenticação OAuth2
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
+
 
 # Obter o usuário logado a partir do token JWT
 async def get_current_user(

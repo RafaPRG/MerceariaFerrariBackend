@@ -19,7 +19,6 @@ def test_email_equality():
     assert Email("a@b.com") != Email("b@a.com")
 
 
-
 def test_invalid_password_short():
     with pytest.raises(PasswordValidationError):
         Password("abc123")

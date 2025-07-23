@@ -24,22 +24,22 @@ class SQLAlchemyUserRepository(UserRepository):
             return self._current_user
 
         raise ValueError("Credenciais inválidas")
-    
-    async def update_password(self, email:Email, password:Password):
+
+    async def update_password(self, email: Email, password: Password):
         if await self._email_exist(email):
             result = await self._session.execute(
                 update(UserModel)
-                .where(UserModel.email==email.value())
-                .values(
-                    password=str(password)
-                )
+                .where(UserModel.email == email.value())
+                .values(password=str(password))
             )
             await self._session.commit()
             return
         raise ValueError("Email não existente")
 
-    async def _email_exist(self, email:Email):
-        result = await self._session.execute(select(UserModel).where(UserModel.email==email.value()))
+    async def _email_exist(self, email: Email):
+        result = await self._session.execute(
+            select(UserModel).where(UserModel.email == email.value())
+        )
         return result.scalar_one_or_none() is not None
 
     async def logout(self) -> None:
@@ -50,7 +50,7 @@ class SQLAlchemyUserRepository(UserRepository):
 
     async def set_current_user(self, user: User) -> None:
         self._current_user = user
-    
+
     async def get_by_id(self, user_id: str) -> User:
         result = await self._session.execute(
             select(UserModel).where(UserModel.id == user_id)

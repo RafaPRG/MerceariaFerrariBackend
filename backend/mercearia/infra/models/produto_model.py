@@ -16,7 +16,9 @@ class ProdutoModel(Base):
     preco: Mapped[float] = mapped_column(sa.Float, nullable=False)
     imagem: Mapped[str] = mapped_column(sa.String, nullable=False)
 
-    favoritado = relationship("FavoritoModel", back_populates="produto", lazy="selectin")
+    favoritado = relationship(
+        "FavoritoModel", back_populates="produto", lazy="selectin"
+    )
 
     @classmethod
     def from_entity(cls, entity: Produto) -> "ProdutoModel":

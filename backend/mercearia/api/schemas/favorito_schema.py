@@ -12,5 +12,7 @@ class FavoritoResponse(BaseModel):
     produto: ProdutoResponse = Field(..., description="Nome do produto favoritado")
 
     @classmethod
-    def from_entity(cls, favorito:Favorito):
-        return cls(id=favorito.user_id, produto=ProdutoResponse.from_entity(favorito.produto))
+    def from_entity(cls, favorito: Favorito):
+        return cls(
+            id=favorito.user_id, produto=ProdutoResponse.from_entity(favorito.produto)
+        )

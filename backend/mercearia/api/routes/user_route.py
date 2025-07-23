@@ -7,7 +7,9 @@ from mercearia.api.schemas.user_schema import (
 )
 from mercearia.domain.entities.user import User
 from mercearia.domain.repositories.user_repository import UserRepository
-from mercearia.infra.repositories.sqlalchemy.sqlalchemy_user_repository import SQLAlchemyUserRepository
+from mercearia.infra.repositories.sqlalchemy.sqlalchemy_user_repository import (
+    SQLAlchemyUserRepository,
+)
 from mercearia.usecases.user.login_user import LoginUser
 from mercearia.usecases.user.update_password import UpdatePassword
 import sqlalchemy
@@ -22,7 +24,9 @@ security = HTTPBearer()
 
 
 @router.post("/login", response_model=TokenResponse, summary="Login de usuário")
-async def login(data: LoginRequest, repo:UserRepository = Depends(get_user_repository)):
+async def login(
+    data: LoginRequest, repo: UserRepository = Depends(get_user_repository)
+):
     try:
         usecase = LoginUser(repo)
         user: User = await usecase.execute(data.email, data.password)
@@ -44,7 +48,7 @@ async def login(data: LoginRequest, repo:UserRepository = Depends(get_user_repos
 async def update_password(
     data: UpdatePasswordRequest,
     session: AsyncSession = Depends(get_db_session),
-    repo: UserRepository = Depends(get_user_repository)
+    repo: UserRepository = Depends(get_user_repository),
 ):
     try:
         usecase = UpdatePassword(repo)

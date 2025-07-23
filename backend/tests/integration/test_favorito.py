@@ -2,13 +2,14 @@ import pytest
 from httpx import AsyncClient
 import json
 
+
 @pytest.mark.asyncio
 async def test_adicionar_listar_remover_favorito(client: AsyncClient):
     # 1. Login com usuário real
-    login = await client.post("/user/login", json={
-        "email": "admin@merceariaferrari.com",
-        "password": "Admin@123"
-    })
+    login = await client.post(
+        "/user/login",
+        json={"email": "admin@merceariaferrari.com", "password": "Admin@123"},
+    )
     assert login.status_code == 200
     token = login.json()["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
@@ -21,7 +22,9 @@ async def test_adicionar_listar_remover_favorito(client: AsyncClient):
     produto_id = produtos[0]["id"]
 
     # 3. Adicionar o produto como favorito
-    add_resp = await client.post("/favoritos/", json={"produto_id": produto_id}, headers=headers)
+    add_resp = await client.post(
+        "/favoritos/", json={"produto_id": produto_id}, headers=headers
+    )
     assert add_resp.status_code == 200, f"Erro ao adicionar favorito: {add_resp.text}"
     assert add_resp.json()["message"] == "Favorito adicionado com sucesso"
 
@@ -36,7 +39,7 @@ async def test_adicionar_listar_remover_favorito(client: AsyncClient):
         "DELETE",
         "/favoritos/",
         headers=headers,
-        content=json.dumps({"produto_id": produto_id})
+        content=json.dumps({"produto_id": produto_id}),
     )
     assert del_resp.status_code == 200
     assert del_resp.json()["message"] == "Favorito removido com sucesso"

@@ -18,8 +18,8 @@ class UserRepository(ABC):
     async def set_current_user(self, user: User) -> None: ...
 
     @abstractmethod
-    async def update_password(self, email:Email, password:Password): ...
+    async def update_password(self, email: Email, password: Password): ...
 
     @abstractmethod
-    async def get_by_id(self, user_id: str) -> User|None:
+    async def get_by_id(self, user_id: str) -> User | None:
         pass

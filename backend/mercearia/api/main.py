@@ -12,6 +12,7 @@ from mercearia.infra.database import engine, async_session, Base
 from mercearia.infra.models.produto_model import ProdutoModel
 from mercearia.infra.models.user_model import UserModel
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Criar tabelas no startup
@@ -31,13 +32,48 @@ async def lifespan(app: FastAPI):
             if qtd_produtos == 0:
                 print("Populando produtos iniciais...")
                 produtos_mock = [
-                    { "nome": "Arroz Coripil Tipo 1 5kg", "preco": 26.30, "imagem": "arroz.png", "descricao": "Pacote de arroz de 5kg" },
-                    { "nome": "Feijão Camil 1kg", "preco": 7.00, "imagem": "feijao.png", "descricao": "Feijão carioca tipo 1" },
-                    { "nome": "Milho Verde em Lata OLÉ", "preco": 4.69, "imagem": "milho.png", "descricao": "Milho verde em conserva" },
-                    { "nome": "Leite Condensado Italac 395g", "preco": 7.71, "imagem": "leite.png", "descricao": "Leite condensado cremoso" },
-                    { "nome": "Requeijão Vigor 200g", "preco": 6.99, "imagem": "requeijao.png", "descricao": "Requeijão cremoso tradicional" },
-                    { "nome": "Latão Brahma Chopp 473ml", "preco": 5.99, "imagem": "brahma.png", "descricao": "Latão de cerveja Brahma" },
-                    { "nome": "Long Neck Heineken 330ml", "preco": 7.00, "imagem": "heineken.png", "descricao": "Cerveja Heineken Long Neck" },
+                    {
+                        "nome": "Arroz Coripil Tipo 1 5kg",
+                        "preco": 26.30,
+                        "imagem": "arroz.png",
+                        "descricao": "Pacote de arroz de 5kg",
+                    },
+                    {
+                        "nome": "Feijão Camil 1kg",
+                        "preco": 7.00,
+                        "imagem": "feijao.png",
+                        "descricao": "Feijão carioca tipo 1",
+                    },
+                    {
+                        "nome": "Milho Verde em Lata OLÉ",
+                        "preco": 4.69,
+                        "imagem": "milho.png",
+                        "descricao": "Milho verde em conserva",
+                    },
+                    {
+                        "nome": "Leite Condensado Italac 395g",
+                        "preco": 7.71,
+                        "imagem": "leite.png",
+                        "descricao": "Leite condensado cremoso",
+                    },
+                    {
+                        "nome": "Requeijão Vigor 200g",
+                        "preco": 6.99,
+                        "imagem": "requeijao.png",
+                        "descricao": "Requeijão cremoso tradicional",
+                    },
+                    {
+                        "nome": "Latão Brahma Chopp 473ml",
+                        "preco": 5.99,
+                        "imagem": "brahma.png",
+                        "descricao": "Latão de cerveja Brahma",
+                    },
+                    {
+                        "nome": "Long Neck Heineken 330ml",
+                        "preco": 7.00,
+                        "imagem": "heineken.png",
+                        "descricao": "Cerveja Heineken Long Neck",
+                    },
                 ]
 
                 for p in produtos_mock:
@@ -47,7 +83,7 @@ async def lifespan(app: FastAPI):
                             nome=p["nome"],
                             preco=p["preco"],
                             imagem=p["imagem"],
-                            descricao=p["descricao"]
+                            descricao=p["descricao"],
                         )
                     )
                 print("Produtos inseridos com sucesso.")
@@ -65,13 +101,13 @@ async def lifespan(app: FastAPI):
                         "name": "Miguel Ferrari",
                         "email": "admin@merceariaferrari.com",
                         "password": "Admin@123",
-                        "role": "admin"
+                        "role": "admin",
                     },
                     {
                         "name": "Jucelino Freitas",
                         "email": "jucelinofreitas@gmail.com",
                         "password": "Juce@123",
-                        "role": "user"
+                        "role": "user",
                     },
                 ]
 
@@ -83,7 +119,7 @@ async def lifespan(app: FastAPI):
                             name=u["name"],
                             email=u["email"],
                             password=hashed_password,
-                            role=u["role"]
+                            role=u["role"],
                         )
                     )
                 print("Usuários inseridos com sucesso.")
@@ -100,6 +136,7 @@ async def lifespan(app: FastAPI):
     await engine.dispose()
     print("Engine do banco desconectado no shutdown.")
 
+
 # Inicialização da aplicação FastAPI
 app = FastAPI(
     title="Mercearia API",
@@ -111,7 +148,7 @@ app = FastAPI(
     },
     license_info={"name": "MIT", "url": "https://opensource.org/licenses/MIT"},
     openapi_tags=openapi_tags,
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 # Origens confiáveis (frontend local e produção)
@@ -129,10 +166,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # Rota de teste
 @app.get("/")
 def root():
     return {"mensagem": "Bem-vindo à API da Mercearia!"}
+
 
 # Rotas principais
 app.include_router(user_route.router, prefix="/user", tags=["Usuários"])

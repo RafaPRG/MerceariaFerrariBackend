@@ -3,7 +3,13 @@ from mercearia.domain.entities.produto import Produto
 
 
 class Favorito:
-    def __init__(self, user_id: str, produto_id: str, id: str | None = None, produto: Produto|None = None):
+    def __init__(
+        self,
+        user_id: str,
+        produto_id: str,
+        id: str | None = None,
+        produto: Produto | None = None,
+    ):
         self.id = id or str(uuid.uuid4())
         self.user_id = user_id
         self.produto_id = produto_id
