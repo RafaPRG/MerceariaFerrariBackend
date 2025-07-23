@@ -154,7 +154,7 @@ app = FastAPI(
 # Origens confiáveis (frontend local e produção)
 origins = [
     "http://localhost:5173",  # Vite dev
-    "https://frontmercearia.vercel.app",  # Produção
+    "https://mercearia-ferrari-react.vercel.app",  # Produção
 ]
 
 # Middleware CORS
