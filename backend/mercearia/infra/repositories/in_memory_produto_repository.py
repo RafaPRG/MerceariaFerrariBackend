@@ -37,4 +37,5 @@ class InMemoryProdutoRepository(ProdutoRepository):
         ]
 
     async def get_all(self) -> List[Produto]:
+        
         return self._produtos
